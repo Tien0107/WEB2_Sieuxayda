@@ -25,12 +25,21 @@
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
+    a {
+      text-decoration: none;
+      color: #1d4ed8;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <h1>👥 Danh sách thành viên trong nhóm</h1>
   <ul>
-    <li th:each="member : ${members}" th:text="${member.name}"></li>
+    <li th:each="member : ${members}">
+      <a th:href="@{'/user/' + ${member.id}}" th:text="${member.name}"></a>
+    </li>
   </ul>
 </body>
 </html>
