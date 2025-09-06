@@ -142,7 +142,6 @@
         const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
         if (res.ok) {
           showAlert("success", "Đã xoá");
-          // Reload the page to refresh the Thymeleaf data
           window.location.reload();
         } else {
           showAlert("danger", "Xoá thất bại");
