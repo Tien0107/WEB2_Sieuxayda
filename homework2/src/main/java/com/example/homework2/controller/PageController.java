@@ -3,6 +3,7 @@ package com.example.homework2.controller;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,10 +18,12 @@ import com.example.homework2.model.Staff;
 import com.example.homework2.repository.CompanyRepository;
 import com.example.homework2.repository.StaffRepository;
 
+
 /**
  * Controller xử lý các trang hiển thị và thao tác CRUD cơ bản
  * Sử dụng form-based operations thay vì AJAX
  */
+
 @Controller
 public class PageController {
 
@@ -33,6 +36,7 @@ public class PageController {
     /**
      * Trang chủ với thống kê
      */
+
     @GetMapping("/")
     public String index(Model model) {
         long totalCompanies = companyRepository.count();
@@ -228,4 +232,5 @@ public class PageController {
         }
         return "redirect:/companies";
     }
+
 }

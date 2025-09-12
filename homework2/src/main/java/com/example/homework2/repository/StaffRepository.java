@@ -19,3 +19,4 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
      */
     List<Staff> findByCompanyId(Long companyId);
 }
+
