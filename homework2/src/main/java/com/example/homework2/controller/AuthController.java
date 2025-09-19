@@ -79,7 +79,7 @@ public class AuthController {
                 model.addAttribute("errorMessage", "Email không được để trống!");
                 return "register";
             }
-            
+             user.setRole("ROLE_USER");
             // Đăng ký user
             userService.registerUser(user);
             model.addAttribute("successMessage", "Đăng ký thành công! Vui lòng đăng nhập.");
