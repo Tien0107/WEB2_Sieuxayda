@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public abstract class AbstractCrudController<T, I> {
@@ -41,6 +42,19 @@ public abstract class AbstractCrudController<T, I> {
   return entity.map(ResponseEntity::ok)
     .orElse(ResponseEntity.notFound().build());
  }
+
+ @PutMapping("/{id}")
+  public ResponseEntity<T> update(@PathVariable I id, @RequestBody T entity) {
+    if (!repository.existsById(id)) {
+        return ResponseEntity.notFound().build();
+    }
+    try {
+        T updatedEntity = repository.save(entity);
+        return ResponseEntity.ok(updatedEntity);
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().build();
+    }
+}
 
  @DeleteMapping("/{id}")
  public ResponseEntity<String> delete(@PathVariable I id) {
