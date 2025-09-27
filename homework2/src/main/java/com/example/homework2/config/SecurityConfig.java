@@ -50,6 +50,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Cho phép truy cập các trang login, register và static resources
                 .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/h2-console/**").permitAll()
+                       // ---- PHÂN QUYỀN ----
+                // Các URL bắt đầu bằng /admin chỉ ADMIN mới được vào
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Các URL bắt đầu bằng /user chỉ USER hoặc ADMIN được vào
+                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                
                 // Yêu cầu authentication cho tất cả các request khác
                 .anyRequest().authenticated()
             )

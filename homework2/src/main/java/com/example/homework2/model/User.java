@@ -50,11 +50,16 @@ public class User implements UserDetails {
     @Column(name = "is_credentials_non_expired")
     private boolean credentialsNonExpired = true;
 
+    //User Role
+    @Column(nullable = false)
+    private String role = "ROLE_USER";
+
+
     // Implement UserDetails methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Mặc định tất cả user đều có role USER
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        return Collections.singletonList(new SimpleGrantedAuthority( role));
     }
 
     @Override

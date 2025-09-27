@@ -45,7 +45,13 @@ public class UserService implements UserDetailsService {
         // Mã hóa mật khẩu trước khi lưu
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
+        //  Thêm role mặc định khi đăng ký (USER thường)
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("ROLE_USER");
+        }
+        
         return userRepository.save(user);
+
     }
     
     /**

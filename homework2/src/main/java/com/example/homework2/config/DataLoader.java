@@ -51,6 +51,7 @@ public class DataLoader {
         admin.setPassword(passwordEncoder.encode("123456"));
         admin.setEmail("admin@company.com");
         admin.setFullName("Administrator");
+        admin.setRole("ROLE_ADMIN"); 
         userRepository.save(admin);
         
         // Tạo user thường
@@ -59,6 +60,7 @@ public class DataLoader {
         user.setPassword(passwordEncoder.encode("123456"));
         user.setEmail("user@company.com");
         user.setFullName("Người dùng");
+        user.setRole("ROLE_USER");
         userRepository.save(user);
         
         System.out.println("Đã tạo " + userRepository.count() + " user mẫu");
