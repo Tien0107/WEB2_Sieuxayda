@@ -8,7 +8,7 @@ import com.example.homework2.repository.CompanyRepository;
 
 @RestController
 @RequestMapping("/api/companies")
-public class CompanyController extends AbstractCrudController<Company, Long> {
+public class CompanyController extends AbstractCrudController<Company, String> {
 
  public CompanyController(CompanyRepository repository) {
   super(repository);

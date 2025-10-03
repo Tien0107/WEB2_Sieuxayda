@@ -3,7 +3,7 @@ package com.example.homework2.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public abstract class AbstractCrudController<T, I> {
 
- protected final JpaRepository<T, I> repository;
+ protected final MongoRepository<T, I> repository;
 
- protected AbstractCrudController(JpaRepository<T, I> repository) {
+ protected AbstractCrudController(MongoRepository<T, I> repository) {
   this.repository = repository;
  }
 

@@ -61,7 +61,7 @@ public class PageController {
      * Hiển thị chi tiết company và danh sách staff
      */
     @GetMapping("/companies/{id}")
-    public String companyDetail(@PathVariable("id") Long id, Model model) {
+    public String companyDetail(@PathVariable("id") String id, Model model) {
         Optional<Company> companyOpt = companyRepository.findById(id);
         if (companyOpt.isEmpty()) {
             model.addAttribute("errorMessage", "Không tìm thấy công ty với ID: " + id);
@@ -103,7 +103,7 @@ public class PageController {
      * Hiển thị form sửa company
      */
     @GetMapping("/companies/{id}/edit")
-    public String editCompanyForm(@PathVariable("id") Long id, Model model) {
+    public String editCompanyForm(@PathVariable("id") String id, Model model) {
         Optional<Company> companyOpt = companyRepository.findById(id);
         if (companyOpt.isEmpty()) {
             return "redirect:/companies";
@@ -116,7 +116,7 @@ public class PageController {
      * Xử lý cập nhật company
      */
     @PostMapping("/companies/{id}/edit")
-    public String updateCompany(@PathVariable("id") Long id, Company company, RedirectAttributes redirectAttributes) {
+    public String updateCompany(@PathVariable("id") String id, Company company, RedirectAttributes redirectAttributes) {
         try {
             company.setId(id);
             companyRepository.save(company);
@@ -131,7 +131,7 @@ public class PageController {
      * Xóa company
      */
     @GetMapping("/companies/{id}/delete")
-    public String deleteCompany(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    public String deleteCompany(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         try {
             companyRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("successMessage", "Xóa công ty thành công!");
@@ -145,14 +145,14 @@ public class PageController {
      * Hiển thị form thêm staff
      */
     @GetMapping("/companies/{companyId}/staff/add")
-    public String addStaffForm(@PathVariable("companyId") Long companyId, Model model) {
+    public String addStaffForm(@PathVariable("companyId") String companyId, Model model) {
         Optional<Company> companyOpt = companyRepository.findById(companyId);
         if (companyOpt.isEmpty()) {
             return "redirect:/companies";
         }
         
         Staff staff = new Staff();
-        staff.setCompany(companyOpt.get());
+        staff.setCompanyId(companyOpt.get().getId());
         
         model.addAttribute("staff", staff);
         model.addAttribute("company", companyOpt.get());
@@ -163,11 +163,11 @@ public class PageController {
      * Xử lý thêm staff mới
      */
     @PostMapping("/companies/{companyId}/staff/add")
-    public String addStaff(@PathVariable("companyId") Long companyId, Staff staff, RedirectAttributes redirectAttributes) {
+    public String addStaff(@PathVariable("companyId") String companyId, Staff staff, RedirectAttributes redirectAttributes) {
         try {
             Optional<Company> companyOpt = companyRepository.findById(companyId);
             if (companyOpt.isPresent()) {
-                staff.setCompany(companyOpt.get());
+                staff.setCompanyId(companyId);
                 staffRepository.save(staff);
                 redirectAttributes.addFlashAttribute("successMessage", "Thêm nhân viên thành công!");
             }
@@ -181,7 +181,7 @@ public class PageController {
      * Hiển thị form sửa staff
      */
     @GetMapping("/staff/{id}/edit")
-    public String editStaffForm(@PathVariable("id") Long id, Model model) {
+    public String editStaffForm(@PathVariable("id") String id, Model model) {
         Optional<Staff> staffOpt = staffRepository.findById(id);
         if (staffOpt.isEmpty()) {
             return "redirect:/companies";
@@ -189,7 +189,7 @@ public class PageController {
         
         Staff staff = staffOpt.get();
         model.addAttribute("staff", staff);
-        model.addAttribute("company", staff.getCompany());
+        model.addAttribute("company", staff.getCompanyId());
         return "staff-form";
     }
 
@@ -197,16 +197,16 @@ public class PageController {
      * Xử lý cập nhật staff
      */
     @PostMapping("/staff/{id}/edit")
-    public String updateStaff(@PathVariable("id") Long id, Staff staff, RedirectAttributes redirectAttributes) {
+    public String updateStaff(@PathVariable("id") String id, Staff staff, RedirectAttributes redirectAttributes) {
         try {
             Optional<Staff> existingStaffOpt = staffRepository.findById(id);
             if (existingStaffOpt.isPresent()) {
                 Staff existingStaff = existingStaffOpt.get();
                 staff.setId(id);
-                staff.setCompany(existingStaff.getCompany());
+                staff.setCompanyId(existingStaff.getCompanyId());
                 staffRepository.save(staff);
                 redirectAttributes.addFlashAttribute("successMessage", "Cập nhật nhân viên thành công!");
-                return "redirect:/companies/" + existingStaff.getCompany().getId();
+                return "redirect:/companies/" + existingStaff.getCompanyId();
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật nhân viên: " + e.getMessage());
@@ -218,11 +218,11 @@ public class PageController {
      * Xóa staff
      */
     @GetMapping("/staff/{id}/delete")
-    public String deleteStaff(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    public String deleteStaff(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Staff> staffOpt = staffRepository.findById(id);
             if (staffOpt.isPresent()) {
-                Long companyId = staffOpt.get().getCompany().getId();
+                String companyId = staffOpt.get().getCompanyId();
                 staffRepository.deleteById(id);
                 redirectAttributes.addFlashAttribute("successMessage", "Xóa nhân viên thành công!");
                 return "redirect:/companies/" + companyId;

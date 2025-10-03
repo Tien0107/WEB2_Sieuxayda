@@ -4,12 +4,16 @@ import com.example.homework2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Cấu hình Spring Security
@@ -46,41 +50,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // Cấu hình authorization
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                // Cho phép truy cập các trang login, register và static resources
-                .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/h2-console/**").permitAll()
-                       // ---- PHÂN QUYỀN ----
-                // Các URL bắt đầu bằng /admin chỉ ADMIN mới được vào
+                .requestMatchers("/auth/**", "/actuator/health").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                // Các URL bắt đầu bằng /user chỉ USER hoặc ADMIN được vào
-                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                
-                // Yêu cầu authentication cho tất cả các request khác
                 .anyRequest().authenticated()
             )
-            // Cấu hình form login
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true")
-                .permitAll()
-            )
-            // Cấu hình logout
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout=true")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-                .permitAll()
-            )
-            // Cấu hình authentication provider
             .authenticationProvider(authenticationProvider())
-            // Tắt CSRF cho H2 console (chỉ dùng trong development)
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-            // Cấu hình frame options cho H2 console
-            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
-            
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
     }
 }

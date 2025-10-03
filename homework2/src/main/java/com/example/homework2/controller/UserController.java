@@ -8,7 +8,7 @@ import com.example.homework2.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/user")
-public class UserController extends AbstractCrudController<User, Long> {
+public class UserController extends AbstractCrudController<User, String> {
 
  public UserController(UserRepository repository) {
   super(repository);
